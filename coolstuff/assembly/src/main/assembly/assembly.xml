@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright Contributors to the ODPi Egeria project.  -->
+
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
+    <formats>
+        <format>tar.gz</format>
+        <format>dir</format>
+    </formats>
+    <id>distribution</id>
+    <baseDirectory>archive</baseDirectory>
+
+
+    <!-- IMPORTANT: Also add ANY modules used here to the dependency in the assembly pom -->
+    <moduleSets>
+
+        <moduleSet>
+            <useAllReactorProjects>true</useAllReactorProjects>
+            <!-- Get ALL our connectors. Hadoop skipped for now.  TODO: review list.  -->
+            <!-- avoiding wildcards means build warnings if a pattern isn't used - helpful for identifying errors -->
+            <includes>
+                 <include>org.example:print</include>
+            </includes>
+            <binaries>
+                <outputDirectory>/print</outputDirectory>
+                <unpack>false</unpack>
+                <!-- Assemblies can pull in dependencies via a built in mechanism -we don't need all these uber jars -->
+                <includeDependencies>false</includeDependencies>
+                <dependencySets>
+                    <dependencySet>
+                        <useTransitiveDependencies>true</useTransitiveDependencies>
+                        <useProjectArtifact>false</useProjectArtifact>
+                        <useProjectAttachments>false</useProjectAttachments>
+                    </dependencySet>
+                </dependencySets>
+                <excludes>
+                    <!-- Not needed, as the build process for each connector does not put this into the main jar artifact -->
+                    <!--exclude>*jar-with-dependencies.jar</exclude-->
+                </excludes>
+            </binaries>
+        </moduleSet>
+
+        <!-- As soon as we add org.example:logging as a project dependency in the pom, it makes our way
+             into the above 'print' part of distro - which doesn't need it. The aim would
+             be to only include it for the following moduleSet-->
+        <!--moduleSet>
+
+            <includes>
+                <include>org.example:logging</include>
+            </includes>
+            <binaries>
+                <outputDirectory>/logging</outputDirectory>
+                <unpack>false</unpack>
+                <includeDependencies>false</includeDependencies>
+                <dependencySets>
+                    <dependencySet>
+                        <outputDirectory>/logging</outputDirectory>
+                        <useTransitiveDependencies>true</useTransitiveDependencies>
+                        <useProjectArtifact>false</useProjectArtifact>
+                        <useProjectAttachments>false</useProjectAttachments>
+                    </dependencySet>
+                </dependencySets>
+            </binaries>
+        </moduleSet-->
+    </moduleSets>
+
+</assembly>
